@@ -1,4 +1,4 @@
-# comdirect
+# comdirect-Tools
 
 ## codipodo
 Codipodo ist ein Programm zum Abfragen der comdirect-Postbox. Es lädt die Dokumente der ersten Seite der Postbox
