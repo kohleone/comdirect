@@ -31,7 +31,6 @@ POSTBOX_URL="https://kunde.comdirect.de/itx/posteingangsuche"
 SUCCESSPAGE="https://kunde.comdirect.de/itx/persoenlicherbereich/anzeigen?execution=e1s1"
 
   @agent = Mechanize.new
-  @agent.pluggable_parser.pdf = Mechanize::DirectorySaver.save_to(DIRECTORY, :overwrite => true)
   
   @agent.get(LOGINURL) do |page|
      login_result = page.form_with(:name => 'login') do |log|
@@ -51,7 +50,14 @@ SUCCESSPAGE="https://kunde.comdirect.de/itx/persoenlicherbereich/anzeigen?execut
     # Nur Eintraege, deren URL "/dokumentenabruf/" enthält, abholen,
     # d.h. Werbung oder andere nicht-downloadbare Elemente überspringen
     @agent.page.links_with(:href => /dokumentenabruf/).each do |link|
-      link.click
+      filename = link.href.split('/')[-1]
+    
+      if idx = filename.rindex(".pdf")
+        filename = filename[0..(idx+3)]
+      end
+
+      path = File.join DIRECTORY, filename
+      result = link.click.save! path
     end
   end
   @agent.get(LOGOUTURL)
